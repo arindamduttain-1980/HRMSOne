@@ -1,0 +1,39 @@
+class ApiException implements Exception {
+  final String message;
+  final int? statusCode;
+  final dynamic details;
+
+  ApiException({
+    required this.message,
+    this.statusCode,
+    this.details,
+  });
+
+  @override
+  String toString() => message;
+}
+
+class NetworkException extends ApiException {
+  NetworkException([String message = 'Cannot connect to server. Check your network and server URL.'])
+      : super(message: message);
+}
+
+class UnauthorizedException extends ApiException {
+  UnauthorizedException([String message = 'Session expired. Please log in again.'])
+      : super(message: message, statusCode: 401);
+}
+
+class ForbiddenException extends ApiException {
+  ForbiddenException([String message = 'Access denied. You do not have permission for this action.'])
+      : super(message: message, statusCode: 403);
+}
+
+class ServerException extends ApiException {
+  ServerException([String message = 'Internal server error. Please try again later.'])
+      : super(message: message, statusCode: 500);
+}
+
+class ValidationException extends ApiException {
+  ValidationException(String message) : super(message: message, statusCode: 400);
+}
+
