@@ -11,7 +11,10 @@ class CalendarRepository {
     final data = <String, dynamic>{};
     if (month != null && month.isNotEmpty) data['month'] = month;
 
-    final response = await _apiClient.request(ApiConstants.actionCalendarList, data: data);
+    final response = await _apiClient.request(
+      ApiConstants.actionCalendarList,
+      data: data.isEmpty ? null : data,
+    );
     final events = <CalendarEventModel>[];
     if (response['events'] is List) {
       for (final item in response['events']) {
@@ -38,11 +41,11 @@ class CalendarRepository {
       'event_date': eventDate,
       'all_day': allDay ? 1 : 0,
     };
-    if (description != null) data['description'] = description;
-    if (startTime != null) data['start_time'] = startTime;
-    if (endTime != null) data['end_time'] = endTime;
-    if (color != null) data['color'] = color;
-    if (type != null) data['type'] = type;
+    if (description != null && description.isNotEmpty) data['description'] = description;
+    if (!allDay && startTime != null && startTime.isNotEmpty) data['start_time'] = startTime;
+    if (!allDay && endTime != null && endTime.isNotEmpty) data['end_time'] = endTime;
+    if (color != null && color.isNotEmpty) data['color'] = color;
+    if (type != null && type.isNotEmpty) data['type'] = type;
 
     final response = await _apiClient.request(ApiConstants.actionCalendarCreate, data: data);
     return response['id'] is int ? response['id'] : int.tryParse(response['id']?.toString() ?? '0') ?? 0;
@@ -65,11 +68,11 @@ class CalendarRepository {
       'event_date': eventDate,
       'all_day': allDay ? 1 : 0,
     };
-    if (description != null) data['description'] = description;
-    if (startTime != null) data['start_time'] = startTime;
-    if (endTime != null) data['end_time'] = endTime;
-    if (color != null) data['color'] = color;
-    if (type != null) data['type'] = type;
+    if (description != null && description.isNotEmpty) data['description'] = description;
+    if (!allDay && startTime != null && startTime.isNotEmpty) data['start_time'] = startTime;
+    if (!allDay && endTime != null && endTime.isNotEmpty) data['end_time'] = endTime;
+    if (color != null && color.isNotEmpty) data['color'] = color;
+    if (type != null && type.isNotEmpty) data['type'] = type;
 
     final response = await _apiClient.request(ApiConstants.actionCalendarUpdate, data: data);
     return response['message']?.toString() ?? 'Event updated.';

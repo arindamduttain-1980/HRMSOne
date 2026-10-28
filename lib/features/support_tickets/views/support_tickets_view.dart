@@ -233,49 +233,53 @@ class SupportTicketsView extends GetView<TicketController> {
               ),
               const SizedBox(height: 12),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: Obx(() => DropdownButtonFormField<TicketCategoryModel>(
-                          value: controller.selectedCategory.value,
-                          decoration: InputDecoration(
-                            labelText: 'Category',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          items: controller.categories.map((cat) {
-                            return DropdownMenuItem(
-                              value: cat,
-                              child: Text(cat.name, style: const TextStyle(fontSize: 13)),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) controller.selectedCategory.value = val;
-                          },
-                        )),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Obx(() => DropdownButtonFormField<String>(
-                          value: controller.selectedPriority.value,
-                          decoration: InputDecoration(
-                            labelText: 'Priority',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          items: controller.priorities.map((p) {
-                            return DropdownMenuItem(
-                              value: p,
-                              child: Text(p.toUpperCase(), style: const TextStyle(fontSize: 12)),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) controller.selectedPriority.value = val;
-                          },
-                        )),
-                  ),
-                ],
-              ),
+              // Category Dropdown (single line full width)
+              Obx(() => DropdownButtonFormField<TicketCategoryModel>(
+                    value: controller.selectedCategory.value,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Category',
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.categories.map((cat) {
+                      return DropdownMenuItem(
+                        value: cat,
+                        child: Text(
+                          cat.name,
+                          style: const TextStyle(fontSize: 14),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) controller.selectedCategory.value = val;
+                    },
+                  )),
+              const SizedBox(height: 12),
+
+              // Priority Dropdown (single line full width)
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.selectedPriority.value,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Priority',
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.priorities.map((p) {
+                      return DropdownMenuItem(
+                        value: p,
+                        child: Text(
+                          p.toUpperCase(),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) controller.selectedPriority.value = val;
+                    },
+                  )),
               const SizedBox(height: 20),
 
               ElevatedButton(

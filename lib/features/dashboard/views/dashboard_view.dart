@@ -366,6 +366,8 @@ class DashboardView extends GetView<DashboardController> {
             // Primary In/Out Action Buttons
             Obx(() {
               final isBusy = controller.isActionLoading.value;
+              final isCheckingIn = controller.activeAction.value == 'check_in';
+              final isCheckingOut = controller.activeAction.value == 'check_out';
               final today = controller.todayRecord.value;
               final hasCheckedIn = today != null && today.checkIn != null && today.checkIn!.isNotEmpty;
               final hasCheckedOut = today != null && today.checkOut != null && today.checkOut!.isNotEmpty;
@@ -375,8 +377,14 @@ class DashboardView extends GetView<DashboardController> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: (isBusy || hasCheckedIn) ? null : controller.checkIn,
-                      icon: const Icon(Icons.fingerprint, size: 20),
-                      label: const Text('Check In'),
+                      icon: isCheckingIn
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Icon(Icons.fingerprint, size: 20),
+                      label: Text(isCheckingIn ? 'Locating...' : 'Check In'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.success,
                         foregroundColor: Colors.white,
@@ -389,8 +397,14 @@ class DashboardView extends GetView<DashboardController> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: (isBusy || !hasCheckedIn || hasCheckedOut) ? null : controller.checkOut,
-                      icon: const Icon(Icons.door_front_door_outlined, size: 20),
-                      label: const Text('Check Out'),
+                      icon: isCheckingOut
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Icon(Icons.door_front_door_outlined, size: 20),
+                      label: Text(isCheckingOut ? 'Locating...' : 'Check Out'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.danger,
                         foregroundColor: Colors.white,

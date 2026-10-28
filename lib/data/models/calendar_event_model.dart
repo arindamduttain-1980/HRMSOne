@@ -26,7 +26,7 @@ class CalendarEventModel {
       id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
       title: json['title']?.toString() ?? '',
       description: json['description']?.toString(),
-      eventDate: json['event_date']?.toString() ?? '',
+      eventDate: json['event_date']?.toString() ?? json['date']?.toString() ?? '',
       startTime: json['start_time']?.toString(),
       endTime: json['end_time']?.toString(),
       color: json['color']?.toString() ?? '#1a56db',

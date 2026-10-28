@@ -49,7 +49,8 @@ class TravelAllowanceView extends GetView<TravelController> {
           return EmptyStateView(
             icon: Icons.alt_route_outlined,
             title: 'No Travel Claims',
-            message: 'Tap the + button to file local or outstation travel claims.',
+            message:
+                'Tap the + button to file local or outstation travel claims.',
             buttonText: 'Submit Claim',
             onButtonPressed: () {
               controller.openApplyModal();
@@ -109,7 +110,8 @@ class TravelAllowanceView extends GetView<TravelController> {
           const SizedBox(height: 6),
           Text(
             claim.purpose,
-            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            style:
+                const TextStyle(fontSize: 13, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
           Row(
@@ -122,18 +124,25 @@ class TravelAllowanceView extends GetView<TravelController> {
                 ),
                 child: Text(
                   claim.mode.replaceAll('_', ' ').toUpperCase(),
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary),
+                  style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 DateFormatter.toDisplayDate(claim.travelDate),
-                style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                style:
+                    const TextStyle(fontSize: 11, color: AppColors.textMuted),
               ),
               const Spacer(),
               Text(
                 CurrencyFormatter.format(claim.totalAmount),
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: AppColors.success),
+                style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.success),
               ),
             ],
           ),
@@ -143,8 +152,13 @@ class TravelAllowanceView extends GetView<TravelController> {
               alignment: Alignment.centerRight,
               child: TextButton.icon(
                 onPressed: () => controller.cancelClaim(claim.id),
-                icon: const Icon(Icons.close, size: 14, color: AppColors.danger),
-                label: const Text('Cancel Claim', style: TextStyle(fontSize: 12, color: AppColors.danger, fontWeight: FontWeight.w700)),
+                icon:
+                    const Icon(Icons.close, size: 14, color: AppColors.danger),
+                label: const Text('Cancel Claim',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.danger,
+                        fontWeight: FontWeight.w700)),
               ),
             ),
           ],
@@ -158,13 +172,16 @@ class TravelAllowanceView extends GetView<TravelController> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
           top: 24,
           left: 20,
           right: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + MediaQuery.of(ctx).padding.bottom + 20,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom +
+              MediaQuery.of(ctx).padding.bottom +
+              20,
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -192,7 +209,8 @@ class TravelAllowanceView extends GetView<TravelController> {
                       decoration: InputDecoration(
                         labelText: 'From Place',
                         hintText: 'e.g. Noida',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
@@ -203,7 +221,8 @@ class TravelAllowanceView extends GetView<TravelController> {
                       decoration: InputDecoration(
                         labelText: 'To Place',
                         hintText: 'e.g. Gurugram',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
@@ -216,47 +235,60 @@ class TravelAllowanceView extends GetView<TravelController> {
                 decoration: InputDecoration(
                   labelText: 'Purpose',
                   hintText: 'e.g. Client meeting with Sunrise Logistics',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               const SizedBox(height: 12),
 
-              // Travel Type & Mode
-              Row(
-                children: [
-                  Expanded(
-                    child: Obx(() => DropdownButtonFormField<String>(
-                          value: controller.travelType.value,
-                          decoration: InputDecoration(
-                            labelText: 'Type',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          items: controller.travelTypes.map((t) {
-                            return DropdownMenuItem(value: t, child: Text(t.capitalizeFirst!));
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) controller.travelType.value = val;
-                          },
-                        )),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Obx(() => DropdownButtonFormField<String>(
-                          value: controller.travelMode.value,
-                          decoration: InputDecoration(
-                            labelText: 'Mode',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          items: controller.travelModes.map((m) {
-                            return DropdownMenuItem(value: m, child: Text(m.replaceAll('_', ' ').capitalizeFirst!));
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) controller.travelMode.value = val;
-                          },
-                        )),
-                  ),
-                ],
-              ),
+              // Travel Type (single line full width)
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.travelType.value,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Travel Type',
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 14),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.travelTypes.map((t) {
+                      return DropdownMenuItem(
+                        value: t,
+                        child: Text(t.capitalizeFirst!,
+                            style: const TextStyle(fontSize: 14)),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) controller.travelType.value = val;
+                    },
+                  )),
+              const SizedBox(height: 12),
+
+              // Travel Mode (single line full width)
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.travelMode.value,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Travel Mode',
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 14),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.travelModes.map((m) {
+                      return DropdownMenuItem(
+                        value: m,
+                        child: Text(
+                          m.replaceAll('_', ' ').capitalizeFirst!,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) controller.travelMode.value = val;
+                    },
+                  )),
               const SizedBox(height: 12),
 
               // Distance & Ticket
@@ -269,7 +301,8 @@ class TravelAllowanceView extends GetView<TravelController> {
                       decoration: InputDecoration(
                         labelText: 'Distance (KM)',
                         hintText: 'e.g. 45',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
@@ -281,7 +314,8 @@ class TravelAllowanceView extends GetView<TravelController> {
                       decoration: InputDecoration(
                         labelText: 'Ticket / Tolls (₹)',
                         hintText: '0.00',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
@@ -294,9 +328,12 @@ class TravelAllowanceView extends GetView<TravelController> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Submit Claim', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                child: const Text('Submit Claim',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700)),
               ),
             ],
           ),

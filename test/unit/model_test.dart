@@ -7,6 +7,7 @@ import 'package:mbs_attendance_app/data/models/task_model.dart';
 import 'package:mbs_attendance_app/data/models/salary_slip_model.dart';
 import 'package:mbs_attendance_app/data/models/travel_claim_model.dart';
 import 'package:mbs_attendance_app/data/models/crm_lead_model.dart';
+import 'package:mbs_attendance_app/data/models/calendar_event_model.dart';
 
 void main() {
   group('Model Serialization Tests', () {
@@ -173,6 +174,42 @@ void main() {
       expect(lead.leadNo, 'LD-00035');
       expect(lead.dealValue, 150000.00);
       expect(lead.status, 'proposal_sent');
+    });
+
+    test('CalendarEventModel serialization and all_day mapping', () {
+      final json = {
+        'id': 8,
+        'user_id': 9,
+        'title': 'test event',
+        'description': 'Product demo',
+        'event_date': '2026-10-28',
+        'start_time': '15:11:00',
+        'end_time': '18:15:00',
+        'color': '#fef08a',
+        'type': 'personal',
+        'all_day': 0,
+      };
+
+      final event = CalendarEventModel.fromJson(json);
+      expect(event.id, 8);
+      expect(event.title, 'test event');
+      expect(event.eventDate, '2026-10-28');
+      expect(event.startTime, '15:11:00');
+      expect(event.endTime, '18:15:00');
+      expect(event.color, '#fef08a');
+      expect(event.type, 'personal');
+      expect(event.allDay, false);
+
+      final jsonAllDay = {
+        'id': 9,
+        'title': 'Company Holiday',
+        'event_date': '2026-10-29',
+        'all_day': 1,
+        'type': 'holiday',
+      };
+      final eventAllDay = CalendarEventModel.fromJson(jsonAllDay);
+      expect(eventAllDay.allDay, true);
+      expect(eventAllDay.type, 'holiday');
     });
   });
 }

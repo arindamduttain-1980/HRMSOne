@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/location_service.dart';
 import '../../../data/models/attendance_model.dart';
 import '../../../data/repositories/attendance_repository.dart';
 
 class DashboardController extends GetxController {
   final AttendanceRepository _attendanceRepository;
   final AuthService _authService;
+  final LocationService _locationService;
 
   DashboardController({
     required AttendanceRepository attendanceRepository,
     required AuthService authService,
+    LocationService? locationService,
   })  : _attendanceRepository = attendanceRepository,
-        _authService = authService;
+        _authService = authService,
+        _locationService = locationService ?? Get.find<LocationService>();
 
   // Real-time Clock
   final RxString currentTime = ''.obs;
@@ -24,6 +28,7 @@ class DashboardController extends GetxController {
   // Attendance State
   final RxBool isLoading = false.obs;
   final RxBool isActionLoading = false.obs;
+  final RxString activeAction = ''.obs;
   final RxString errorMessage = ''.obs;
 
   final Rx<AttendanceRecord?> todayRecord = Rx<AttendanceRecord?>(null);
@@ -76,11 +81,23 @@ class DashboardController extends GetxController {
   }
 
   Future<void> checkIn() async {
-    final note = noteController.text.trim();
     isActionLoading.value = true;
+    activeAction.value = 'check_in';
     try {
+      // 1. Mandatory Location Verification: must obtain valid GPS coordinates
+      final location = await _locationService.obtainLocationForPunch();
+      if (location == null) {
+        // Location permission denied, GPS off, or coordinates unavailable.
+        // Hard requirement: Attendance punch CANNOT proceed without GPS lat/lng.
+        return;
+      }
+
+      final note = noteController.text.trim();
       final response = await _attendanceRepository.checkIn(
         note: note.isNotEmpty ? note : null,
+        lat: location.latitude,
+        lng: location.longitude,
+        address: location.address,
       );
       noteController.clear();
       Get.snackbar(
@@ -101,13 +118,27 @@ class DashboardController extends GetxController {
       );
     } finally {
       isActionLoading.value = false;
+      activeAction.value = '';
     }
   }
 
   Future<void> checkOut() async {
     isActionLoading.value = true;
+    activeAction.value = 'check_out';
     try {
-      final response = await _attendanceRepository.checkOut();
+      // 1. Mandatory Location Verification: must obtain valid GPS coordinates
+      final location = await _locationService.obtainLocationForPunch();
+      if (location == null) {
+        // Location permission denied, GPS off, or coordinates unavailable.
+        // Hard requirement: Attendance punch CANNOT proceed without GPS lat/lng.
+        return;
+      }
+
+      final response = await _attendanceRepository.checkOut(
+        lat: location.latitude,
+        lng: location.longitude,
+        address: location.address,
+      );
       Get.snackbar(
         'Checked Out',
         response['message']?.toString() ?? 'Check-out recorded successfully',
@@ -126,6 +157,7 @@ class DashboardController extends GetxController {
       );
     } finally {
       isActionLoading.value = false;
+      activeAction.value = '';
     }
   }
 
@@ -160,11 +192,21 @@ class DashboardController extends GetxController {
   }
 
   Future<void> earlyLeave() async {
-    final note = noteController.text.trim();
     isActionLoading.value = true;
+    activeAction.value = 'early_leave';
     try {
+      // Mandatory Location Verification for early departure
+      final location = await _locationService.obtainLocationForPunch();
+      if (location == null) {
+        return;
+      }
+
+      final note = noteController.text.trim();
       final response = await _attendanceRepository.earlyLeave(
         note: note.isNotEmpty ? note : 'Early Departure',
+        lat: location.latitude,
+        lng: location.longitude,
+        address: location.address,
       );
       noteController.clear();
       Get.snackbar(
@@ -185,6 +227,7 @@ class DashboardController extends GetxController {
       );
     } finally {
       isActionLoading.value = false;
+      activeAction.value = '';
     }
   }
 

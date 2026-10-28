@@ -306,49 +306,46 @@ class TaskManagerView extends GetView<TaskController> {
               ),
               const SizedBox(height: 12),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: Obx(() => DropdownButtonFormField<String>(
-                          value: controller.selectedPriority.value,
-                          decoration: InputDecoration(
-                            labelText: 'Priority',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          items: controller.priorities.map((p) {
-                            return DropdownMenuItem(
-                              value: p,
-                              child: Text(p.toUpperCase(), style: const TextStyle(fontSize: 12)),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) controller.selectedPriority.value = val;
-                          },
-                        )),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Obx(() => DropdownButtonFormField<String>(
-                          value: controller.selectedStatus.value,
-                          decoration: InputDecoration(
-                            labelText: 'Status',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          items: controller.statuses.map((s) {
-                            return DropdownMenuItem(
-                              value: s,
-                              child: Text(s.replaceAll('_', ' ').capitalizeFirst ?? s, style: const TextStyle(fontSize: 12)),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) controller.selectedStatus.value = val;
-                          },
-                        )),
-                  ),
-                ],
-              ),
+              // Priority Dropdown (single line full width)
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.selectedPriority.value,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Priority',
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.priorities.map((p) {
+                      return DropdownMenuItem(
+                        value: p,
+                        child: Text(p.toUpperCase(), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) controller.selectedPriority.value = val;
+                    },
+                  )),
+              const SizedBox(height: 12),
+
+              // Status Dropdown (single line full width)
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.selectedStatus.value,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Status',
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    items: controller.statuses.map((s) {
+                      return DropdownMenuItem(
+                        value: s,
+                        child: Text(s.replaceAll('_', ' ').capitalizeFirst ?? s, style: const TextStyle(fontSize: 14)),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) controller.selectedStatus.value = val;
+                    },
+                  )),
               const SizedBox(height: 16),
 
               // Action Buttons

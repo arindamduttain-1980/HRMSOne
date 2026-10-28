@@ -270,33 +270,35 @@ class AppDrawer extends StatelessWidget {
     required String route,
   }) {
     final isSelected = Get.currentRoute == route;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      child: Material(
         color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        dense: true,
-        leading: Icon(
-          isSelected ? activeIcon : icon,
-          color: isSelected ? AppColors.primary : AppColors.textSecondary,
-          size: 22,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? AppColors.primary : AppColors.textPrimary,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 14,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          dense: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          leading: Icon(
+            isSelected ? activeIcon : icon,
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            size: 22,
           ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
+          onTap: () {
+            Get.back(); // Close drawer
+            if (Get.currentRoute != route) {
+              Get.toNamed(route);
+            }
+          },
         ),
-        onTap: () {
-          Get.back(); // Close drawer
-          if (Get.currentRoute != route) {
-            Get.toNamed(route);
-          }
-        },
       ),
     );
   }

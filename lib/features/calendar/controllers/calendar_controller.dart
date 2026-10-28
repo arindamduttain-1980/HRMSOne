@@ -14,20 +14,37 @@ class CalendarController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxList<CalendarEventModel> events = <CalendarEventModel>[].obs;
 
-  final Rx<DateTime> selectedMonth = DateTime.now().obs;
-
-  // Editor
+  // Editor controllers & reactive states
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final RxString selectedDate = ''.obs;
-  final RxString startTime = '09:00:00'.obs;
-  final RxString endTime = '10:00:00'.obs;
+  final RxString startTime = ''.obs;
+  final RxString endTime = ''.obs;
   final RxString selectedType = 'personal'.obs;
-  final RxString selectedColor = '#1a56db'.obs;
+  final RxString selectedColor = '#fef08a'.obs;
   final RxBool allDay = false.obs;
   final Rx<CalendarEventModel?> editingEvent = Rx<CalendarEventModel?>(null);
 
-  final List<String> eventTypes = ['personal', 'meeting', 'task', 'holiday'];
+  // Dropdown options matching web application
+  static const List<Map<String, String>> eventTypeOptions = [
+    {'value': 'personal', 'label': 'Personal'},
+    {'value': 'meeting', 'label': 'Meeting'},
+    {'value': 'task', 'label': 'Task'},
+    {'value': 'reminder', 'label': 'Reminder'},
+    {'value': 'holiday', 'label': 'Holiday'},
+    {'value': 'deadline', 'label': 'Deadline'},
+  ];
+
+  // Palette matching web application NOTE_COLORS swatches
+  static const List<String> eventColors = [
+    '#fef08a', // light yellow
+    '#bbf7d0', // light green
+    '#bfdbfe', // light blue
+    '#fecaca', // light pink/red
+    '#fde68a', // pastel amber
+    '#e9d5ff', // pastel lavender
+    '#fbcfe8', // pastel pink
+  ];
 
   @override
   void onInit() {
@@ -36,25 +53,26 @@ class CalendarController extends GetxController {
     loadEvents();
   }
 
-  String get currentMonthLabel => DateFormat('MMMM yyyy').format(selectedMonth.value);
-  String get currentMonthParam => DateFormat('yyyy-MM').format(selectedMonth.value);
-
-  void nextMonth() {
-    selectedMonth.value = DateTime(selectedMonth.value.year, selectedMonth.value.month + 1);
-    loadEvents();
+  /// Groups events by date, ordered chronologically
+  Map<String, List<CalendarEventModel>> get groupedEvents {
+    final groups = <String, List<CalendarEventModel>>{};
+    final sorted = List<CalendarEventModel>.from(events)
+      ..sort((a, b) => a.eventDate.compareTo(b.eventDate));
+    for (final e in sorted) {
+      if (e.eventDate.isEmpty) continue;
+      groups.putIfAbsent(e.eventDate, () => []).add(e);
+    }
+    return groups;
   }
 
-  void prevMonth() {
-    selectedMonth.value = DateTime(selectedMonth.value.year, selectedMonth.value.month - 1);
-    loadEvents();
-  }
-
+  /// Fetches events from server without month query parameter to match web behavior
+  /// and avoid backend collation mismatch
   Future<void> loadEvents() async {
     isLoading.value = true;
     errorMessage.value = '';
 
     try {
-      final list = await _calendarRepository.getEvents(month: currentMonthParam);
+      final list = await _calendarRepository.getEvents();
       list.sort((a, b) => a.eventDate.compareTo(b.eventDate));
       events.assignAll(list);
     } catch (e) {
@@ -69,10 +87,10 @@ class CalendarController extends GetxController {
     titleController.clear();
     descriptionController.clear();
     selectedDate.value = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    startTime.value = '09:00:00';
-    endTime.value = '10:00:00';
+    startTime.value = '';
+    endTime.value = '';
     selectedType.value = 'personal';
-    selectedColor.value = '#1a56db';
+    selectedColor.value = eventColors[0];
     allDay.value = false;
   }
 
@@ -80,18 +98,39 @@ class CalendarController extends GetxController {
     editingEvent.value = event;
     titleController.text = event.title;
     descriptionController.text = event.description ?? '';
-    selectedDate.value = event.eventDate;
-    startTime.value = event.startTime ?? '09:00:00';
-    endTime.value = event.endTime ?? '10:00:00';
-    selectedType.value = event.type;
-    selectedColor.value = event.color;
+    selectedDate.value = event.eventDate.isNotEmpty
+        ? event.eventDate
+        : DateFormat('yyyy-MM-dd').format(DateTime.now());
+    startTime.value = (event.startTime != null && event.startTime!.length >= 5)
+        ? event.startTime!.substring(0, 5)
+        : (event.startTime ?? '');
+    endTime.value = (event.endTime != null && event.endTime!.length >= 5)
+        ? event.endTime!.substring(0, 5)
+        : (event.endTime ?? '');
+    final typeLower = event.type.toLowerCase();
+    selectedType.value = eventTypeOptions.any((opt) => opt['value'] == typeLower)
+        ? typeLower
+        : 'personal';
+    selectedColor.value = event.color.isNotEmpty ? event.color : eventColors[0];
     allDay.value = event.allDay;
   }
 
   Future<void> saveEvent() async {
     final title = titleController.text.trim();
     if (title.isEmpty) {
-      Get.snackbar('Required', 'Event title cannot be empty', snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Required',
+        'Enter an event title.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    if (selectedDate.value.isEmpty) {
+      Get.snackbar(
+        'Required',
+        'Pick a date for the event.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
@@ -101,8 +140,8 @@ class CalendarController extends GetxController {
           title: title,
           description: descriptionController.text.trim(),
           eventDate: selectedDate.value,
-          startTime: startTime.value,
-          endTime: endTime.value,
+          startTime: allDay.value ? null : startTime.value,
+          endTime: allDay.value ? null : endTime.value,
           color: selectedColor.value,
           type: selectedType.value,
           allDay: allDay.value,
@@ -113,8 +152,8 @@ class CalendarController extends GetxController {
           title: title,
           description: descriptionController.text.trim(),
           eventDate: selectedDate.value,
-          startTime: startTime.value,
-          endTime: endTime.value,
+          startTime: allDay.value ? null : startTime.value,
+          endTime: allDay.value ? null : endTime.value,
           color: selectedColor.value,
           type: selectedType.value,
           allDay: allDay.value,
@@ -123,8 +162,17 @@ class CalendarController extends GetxController {
 
       Get.back(); // close modal
       await loadEvents();
+      Get.snackbar(
+        'Success',
+        editingEvent.value == null ? 'Event saved.' : 'Event updated.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -132,8 +180,17 @@ class CalendarController extends GetxController {
     try {
       await _calendarRepository.deleteEvent(id);
       await loadEvents();
+      Get.snackbar(
+        'Success',
+        'Event deleted.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -144,4 +201,3 @@ class CalendarController extends GetxController {
     super.onClose();
   }
 }
-
