@@ -58,7 +58,8 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
             // Top Header & Prompt Pill
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Column(
                   children: [
                     Row(
@@ -67,12 +68,14 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
                         CircleAvatar(
                           backgroundColor: Colors.black45,
                           child: IconButton(
-                            icon: const Icon(Icons.close_rounded, color: Colors.white),
+                            icon: const Icon(Icons.close_rounded,
+                                color: Colors.white),
                             onPressed: () => Get.back(),
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 6),
                           decoration: BoxDecoration(
                             color: Colors.black54,
                             borderRadius: BorderRadius.circular(20),
@@ -80,26 +83,36 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.fingerprint_rounded, color: Colors.white, size: 16),
+                              const Icon(Icons.fingerprint_rounded,
+                                  color: Colors.white, size: 16),
                               const SizedBox(width: 6),
                               Text(
                                 controller.action == 'check_in'
                                     ? 'Check-In Verification'
-                                    : (controller.action == 'early_leave' ? 'Early Leave Verification' : 'Check-Out Verification'),
-                                style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                                    : (controller.action == 'early_leave'
+                                        ? 'Early Leave Verification'
+                                        : 'Check-Out Verification'),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
                             color: Colors.black45,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'Try ${controller.retryCount.value + 1}/3',
-                            style: const TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -108,9 +121,11 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
 
                     // Instructional Prompt Pill
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 10),
                       decoration: BoxDecoration(
-                        color: _getPromptBackgroundColor(controller.livenessState.value),
+                        color: _getPromptBackgroundColor(
+                            controller.livenessState.value),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -171,19 +186,24 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
                             SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                              child: CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2.5),
                             ),
                             SizedBox(width: 14),
                             Text(
                               'Verifying Face Biometrics...',
-                              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
                       )
                     else
                       ElevatedButton.icon(
-                        onPressed: controller.isCameraInitialized.value && !controller.isProcessing.value
+                        onPressed: controller.isCameraInitialized.value &&
+                                !controller.isProcessing.value
                             ? controller.verifyAndRecordAttendance
                             : null,
                         icon: const Icon(Icons.verified_user_rounded, size: 22),
@@ -193,9 +213,12 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
                           foregroundColor: Colors.white,
                           disabledBackgroundColor: Colors.white24,
                           disabledForegroundColor: Colors.white38,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          textStyle: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ),
                   ],
@@ -218,7 +241,6 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
       case LivenessState.invalidFace:
         return AppColors.danger.withOpacity(0.9);
       case LivenessState.noFace:
-      default:
         return Colors.black87;
     }
   }
@@ -233,7 +255,6 @@ class FaceVerificationView extends GetView<FaceVerificationController> {
       case LivenessState.invalidFace:
         return Icons.warning_rounded;
       case LivenessState.noFace:
-      default:
         return Icons.face_rounded;
     }
   }
@@ -290,7 +311,7 @@ class _VerificationViewfinderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _VerificationViewfinderPainter oldDelegate) {
-    return oldDelegate.livenessState != livenessState || oldDelegate.isAligned != isAligned;
+    return oldDelegate.livenessState != livenessState ||
+        oldDelegate.isAligned != isAligned;
   }
 }
-

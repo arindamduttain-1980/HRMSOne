@@ -51,7 +51,8 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
             // Top Header & Prompt Pill
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Column(
                   children: [
                     Row(
@@ -60,12 +61,14 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
                         CircleAvatar(
                           backgroundColor: Colors.black45,
                           child: IconButton(
-                            icon: const Icon(Icons.arrow_back, color: Colors.white),
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.white),
                             onPressed: () => Get.back(),
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 6),
                           decoration: BoxDecoration(
                             color: Colors.black54,
                             borderRadius: BorderRadius.circular(20),
@@ -73,11 +76,15 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
                           ),
                           child: const Row(
                             children: [
-                              Icon(Icons.face_unlock_rounded, color: Colors.white, size: 16),
+                              Icon(Icons.face_unlock_rounded,
+                                  color: Colors.white, size: 16),
                               SizedBox(width: 6),
                               Text(
                                 'Face Enrollment',
-                                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -89,9 +96,11 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
 
                     // Instructional Prompt Pill
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 10),
                       decoration: BoxDecoration(
-                        color: _getPromptBackgroundColor(controller.livenessState.value),
+                        color: _getPromptBackgroundColor(
+                            controller.livenessState.value),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -152,19 +161,24 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
                             SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                              child: CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2.5),
                             ),
                             SizedBox(width: 14),
                             Text(
                               'Processing Biometric Template...',
-                              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
                       )
                     else
                       ElevatedButton.icon(
-                        onPressed: controller.isCameraInitialized.value && !controller.isProcessing.value
+                        onPressed: controller.isCameraInitialized.value &&
+                                !controller.isProcessing.value
                             ? controller.captureAndRegisterFace
                             : null,
                         icon: const Icon(Icons.camera_rounded, size: 22),
@@ -174,9 +188,12 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
                           foregroundColor: Colors.white,
                           disabledBackgroundColor: Colors.white24,
                           disabledForegroundColor: Colors.white38,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                          textStyle: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ),
                   ],
@@ -199,7 +216,6 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
       case LivenessState.invalidFace:
         return AppColors.danger.withOpacity(0.9);
       case LivenessState.noFace:
-      default:
         return Colors.black87;
     }
   }
@@ -214,7 +230,6 @@ class FaceRegistrationCameraView extends GetView<FaceRegistrationController> {
       case LivenessState.invalidFace:
         return Icons.warning_rounded;
       case LivenessState.noFace:
-      default:
         return Icons.face_rounded;
     }
   }
@@ -273,7 +288,7 @@ class _OvalViewfinderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _OvalViewfinderPainter oldDelegate) {
-    return oldDelegate.livenessState != livenessState || oldDelegate.isAligned != isAligned;
+    return oldDelegate.livenessState != livenessState ||
+        oldDelegate.isAligned != isAligned;
   }
 }
-
