@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Your camera is required to capture and update your employee profile avatar.</string>
+	<string>Camera access is required for employee face registration and biometric attendance verification.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Access to your photo library is required to select profile photos and save digital cards.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

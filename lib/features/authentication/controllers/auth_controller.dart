@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../core/security/face_storage_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/storage/storage_service.dart';
 import '../../../data/models/company_model.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../data/repositories/company_repository.dart';
+import '../../../data/repositories/face_repository.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _authRepository;
   final AuthService _authService;
   final StorageService _storageService;
   final CompanyRepository _companyRepository;
+  final FaceStorageService _faceStorageService;
+  final FaceRepository _faceRepository;
 
   AuthController({
     required AuthRepository authRepository,
     required AuthService authService,
     required StorageService storageService,
     CompanyRepository? companyRepository,
+    FaceStorageService? faceStorageService,
+    FaceRepository? faceRepository,
   })  : _authRepository = authRepository,
         _authService = authService,
         _storageService = storageService,
-        _companyRepository = companyRepository ?? Get.find<CompanyRepository>();
+        _companyRepository = companyRepository ?? Get.find<CompanyRepository>(),
+        _faceStorageService = faceStorageService ?? Get.find<FaceStorageService>(),
+        _faceRepository = faceRepository ?? Get.find<FaceRepository>();
 
   final formKey = GlobalKey<FormState>();
 
@@ -39,18 +47,15 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     _loadCompanies();
-    //_restoreRememberedEmail();
   }
 
   Future<void> _loadCompanies() async {
     isCompaniesLoading.value = true;
     try {
-      // 1. First check cached companies
       final cached = _storageService.cachedCompanyList;
       if (cached.isNotEmpty) {
         companies.assignAll(cached);
       } else {
-        // If empty, fetch from API
         final fetched = await _companyRepository.getCompanyList();
         if (fetched.isNotEmpty) {
           companies.assignAll(fetched);
@@ -58,7 +63,6 @@ class AuthController extends GetxController {
         }
       }
 
-      // 2. Determine initial selected company
       final savedCompany = _storageService.selectedCompany;
       CompanyModel? toSelect;
       if (savedCompany != null) {
@@ -73,7 +77,6 @@ class AuthController extends GetxController {
         await _storageService.setSelectedCompany(toSelect);
       }
     } catch (_) {
-      // If error occurs, ensure at least cached or fallback is available
       final cached = _storageService.cachedCompanyList;
       if (cached.isNotEmpty) {
         companies.assignAll(cached);
@@ -87,18 +90,10 @@ class AuthController extends GetxController {
   void selectCompany(CompanyModel? company) {
     if (company != null) {
       selectedCompany.value = company;
-      // Immediately updates the entire app's base URL and active company
       _storageService.setSelectedCompany(company);
       errorMessage.value = '';
     }
   }
-
-  // void _restoreRememberedEmail() {
-  //   final remembered = _storageService.rememberEmail;
-  //   if (remembered != null && remembered.isNotEmpty) {
-  //     emailController.text = remembered;
-  //   }
-  // }
 
   Future<void> login() async {
     errorMessage.value = '';
@@ -115,7 +110,6 @@ class AuthController extends GetxController {
     isLoading.value = true;
 
     try {
-      // Guarantee base URL is set to the selected company
       await _storageService.setSelectedCompany(selectedCompany.value!);
 
       final email = emailController.text.trim();
@@ -126,14 +120,35 @@ class AuthController extends GetxController {
         password: password,
       );
 
-      // Save email for quick login
       await _storageService.setRememberEmail(email);
-
-      // Set session in AuthService
       _authService.setSession(result.token, result.user);
 
-      // Navigate to dashboard
-      Get.offAllNamed(AppRoutes.dashboard);
+      // Biometric Decision Flow:
+      // face = 0: Face registration is mandatory
+      // face = 1: Face is registered, verify local template presence
+      if (result.face == 0) {
+        Get.offAllNamed(AppRoutes.faceRegistrationIntro);
+      } else {
+        final hasLocalTemplate = await _faceStorageService.hasFaceTemplate(result.user.id);
+
+        if (!hasLocalTemplate) {
+          // Attempt remote recovery/synchronization
+          final serverTemplate = await _faceRepository.getFaceTemplateFromServer();
+          if (serverTemplate != null && serverTemplate.isNotEmpty) {
+            await _faceStorageService.saveFaceTemplate(
+              employeeId: result.user.id,
+              embedding: serverTemplate,
+              isSynced: true,
+            );
+            Get.offAllNamed(AppRoutes.dashboard);
+          } else {
+            // Template missing locally and remotely; redirect to enroll
+            Get.offAllNamed(AppRoutes.faceRegistrationIntro);
+          }
+        } else {
+          Get.offAllNamed(AppRoutes.dashboard);
+        }
+      }
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

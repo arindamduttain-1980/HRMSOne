@@ -231,5 +231,29 @@ void main() {
       expect(serialized['id'], 1);
       expect(serialized['base_url'], 'aavenzaone.aavenzatechnologies.com');
     });
+
+    test('UserModel face flag serialization and verification', () {
+      final json = {
+        'id': 9,
+        'name': 'HR Admin',
+        'face': 0,
+        'email': 'hr@billing.com',
+        'role': 'hr_admin',
+        'designation': 'HR Manager',
+        'photo_url': null,
+        'user_face': '',
+      };
+
+      final user = UserModel.fromJson(json);
+      expect(user.id, 9);
+      expect(user.face, 0);
+      expect(user.isFaceRegistered, false);
+      expect(user.userFace, '');
+
+      final userWithFace = user.copyWith(face: 1, userFace: 'encrypted_template_sample');
+      expect(userWithFace.face, 1);
+      expect(userWithFace.isFaceRegistered, true);
+      expect(userWithFace.userFace, 'encrypted_template_sample');
+    });
   });
 }

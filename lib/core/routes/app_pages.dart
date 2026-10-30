@@ -1,6 +1,12 @@
 import 'package:get/get.dart';
 import '../../features/authentication/bindings/auth_binding.dart';
 import '../../features/authentication/views/login_view.dart';
+import '../../features/face_registration/bindings/face_registration_binding.dart';
+import '../../features/face_registration/views/face_registration_camera_view.dart';
+import '../../features/face_registration/views/face_registration_intro_view.dart';
+import '../../features/face_registration/views/face_registration_success_view.dart';
+import '../../features/face_verification/bindings/face_verification_binding.dart';
+import '../../features/face_verification/views/face_verification_view.dart';
 import '../../features/splash/bindings/splash_binding.dart';
 import '../../features/splash/views/splash_view.dart';
 import '../../features/calendar/bindings/calendar_binding.dart';
@@ -41,6 +47,7 @@ import '../../features/task_manager/views/task_manager_view.dart';
 import '../../features/travel_allowance/bindings/travel_binding.dart';
 import '../../features/travel_allowance/views/travel_allowance_view.dart';
 import 'app_routes.dart';
+import 'face_registration_middleware.dart';
 
 class AppPages {
   AppPages._();
@@ -57,9 +64,30 @@ class AppPages {
       binding: AuthBinding(),
     ),
     GetPage(
+      name: AppRoutes.faceRegistrationIntro,
+      page: () => const FaceRegistrationIntroView(),
+      binding: FaceRegistrationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.faceRegistrationCamera,
+      page: () => const FaceRegistrationCameraView(),
+      binding: FaceRegistrationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.faceRegistrationSuccess,
+      page: () => const FaceRegistrationSuccessView(),
+      binding: FaceRegistrationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.faceVerification,
+      page: () => const FaceVerificationView(),
+      binding: FaceVerificationBinding(),
+    ),
+    GetPage(
       name: AppRoutes.dashboard,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+      middlewares: [FaceRegistrationMiddleware()],
     ),
     GetPage(
       name: AppRoutes.noticeBoard,
