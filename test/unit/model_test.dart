@@ -8,6 +8,7 @@ import 'package:mbs_attendance_app/data/models/salary_slip_model.dart';
 import 'package:mbs_attendance_app/data/models/travel_claim_model.dart';
 import 'package:mbs_attendance_app/data/models/crm_lead_model.dart';
 import 'package:mbs_attendance_app/data/models/calendar_event_model.dart';
+import 'package:mbs_attendance_app/data/models/company_model.dart';
 
 void main() {
   group('Model Serialization Tests', () {
@@ -210,6 +211,25 @@ void main() {
       final eventAllDay = CalendarEventModel.fromJson(jsonAllDay);
       expect(eventAllDay.allDay, true);
       expect(eventAllDay.type, 'holiday');
+    });
+
+    test('CompanyModel serialization and displayName test', () {
+      final json = {
+        'id': 1,
+        'company_name': 'aavenzaone',
+        'base_url': 'aavenzaone.aavenzatechnologies.com',
+        'company_logo': '',
+      };
+
+      final company = CompanyModel.fromJson(json);
+      expect(company.id, 1);
+      expect(company.companyName, 'aavenzaone');
+      expect(company.baseUrl, 'aavenzaone.aavenzatechnologies.com');
+      expect(company.displayName, 'AavenzaOne');
+
+      final serialized = company.toJson();
+      expect(serialized['id'], 1);
+      expect(serialized['base_url'], 'aavenzaone.aavenzatechnologies.com');
     });
   });
 }

@@ -1,7 +1,7 @@
 class AppStrings {
   AppStrings._();
 
-  static const String appName = 'MBSBilling Attendance';
+  static const String appName = 'HRMSOne';
   static const String appTitle = 'AavenzaOne Employee Hub';
   static const String appSubtitle = 'Employee Self-Service & Enterprise HRMS';
 
@@ -13,8 +13,10 @@ class AppStrings {
   static const String signingIn = 'Signing in...';
   static const String logout = 'Logout';
   static const String logoutConfirmTitle = 'Confirm Logout';
-  static const String logoutConfirmMessage = 'Are you sure you want to sign out of your account?';
-  static const String secureConnectionNote = 'Secure connection to your company server';
+  static const String logoutConfirmMessage =
+      'Are you sure you want to sign out of your account?';
+  static const String secureConnectionNote =
+      'Secure connection to your company server';
 
   // Attendance
   static const String checkIn = 'Check In';
@@ -58,4 +60,3 @@ class AppStrings {
   static const String errorOccurred = 'An error occurred';
   static const String retry = 'Retry';
 }
-

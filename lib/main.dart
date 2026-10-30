@@ -5,6 +5,7 @@ import 'core/network/api_client.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/location_service.dart';
 import 'core/storage/storage_service.dart';
+import 'data/repositories/company_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
   Get.put<ApiClient>(ApiClient(storageService));
   Get.put<AuthService>(AuthService(storageService));
   Get.put<LocationService>(LocationService());
+  Get.put<CompanyRepository>(CompanyRepository());
 
   runApp(const AavenzaOneApp());
 }

@@ -6,6 +6,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
+import '../../../data/models/company_model.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginView extends GetView<AuthController> {
@@ -93,46 +94,101 @@ class LoginView extends GetView<AuthController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Server URL Field
-                            Obx(() => Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        label: 'SERVER URL',
-                                        hint: 'https://aavenzaone.aavenzatechnologies.com',
-                                        controller: controller.serverUrlController,
-                                        readOnly: !controller.isEditingServerUrl.value,
-                                        keyboardType: TextInputType.url,
-                                        validator: Validators.url,
-                                        prefixIcon: const Icon(Icons.dns_outlined, size: 20),
+                            // Company Dropdown Field (Replaces Server URL)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'COMPANY',
+                                  style: AppTextStyles.label,
+                                ),
+                                const SizedBox(height: 6),
+                                Obx(() {
+                                  final selected = controller.selectedCompany.value;
+                                  final companies = controller.companies;
+                                  final isLoading = controller.isCompaniesLoading.value;
+
+                                  if (isLoading && companies.isEmpty) {
+                                    return Container(
+                                      height: 52,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.inputBg,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: AppColors.border, width: 1.5),
+                                      ),
+                                      child: const Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Text(
+                                            'Loading companies...',
+                                            style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+
+                                  return DropdownButtonFormField<CompanyModel>(
+                                    value: selected,
+                                    isExpanded: true,
+                                    icon: const Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                        Icons.business_rounded,
+                                        color: AppColors.primary,
+                                        size: 20,
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                      filled: true,
+                                      fillColor: AppColors.inputBg,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: AppColors.border, width: 1.5),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: AppColors.border, width: 1.5),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(color: AppColors.primary, width: 2),
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 2),
-                                      child: InkWell(
-                                        onTap: controller.toggleEditServerUrl,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(13),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.background,
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: AppColors.border, width: 1.5),
+                                    dropdownColor: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    hint: const Text(
+                                      'Select Company',
+                                      style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                                    ),
+                                    items: companies.map((company) {
+                                      return DropdownMenuItem<CompanyModel>(
+                                        value: company,
+                                        child: Text(
+                                          company.displayName,
+                                          style: const TextStyle(
+                                            color: AppColors.textPrimary,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
                                           ),
-                                          child: Icon(
-                                            controller.isEditingServerUrl.value
-                                                ? Icons.check
-                                                : Icons.edit_outlined,
-                                            size: 18,
-                                            color: AppColors.primary,
-                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                )),
+                                      );
+                                    }).toList(),
+                                    onChanged: controller.selectCompany,
+                                    validator: (val) => val == null ? 'Please select a company' : null,
+                                  );
+                                }),
+                              ],
+                            ),
                             const SizedBox(height: 16),
 
                             // Email Field

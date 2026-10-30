@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import '../../features/authentication/bindings/auth_binding.dart';
 import '../../features/authentication/views/login_view.dart';
+import '../../features/splash/bindings/splash_binding.dart';
+import '../../features/splash/views/splash_view.dart';
 import '../../features/calendar/bindings/calendar_binding.dart';
 import '../../features/calendar/views/calendar_view.dart';
 import '../../features/dashboard/bindings/dashboard_binding.dart';
@@ -44,6 +46,11 @@ class AppPages {
   AppPages._();
 
   static final List<GetPage> pages = [
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
     GetPage(
       name: AppRoutes.login,
       page: () => const LoginView(),

@@ -3,7 +3,10 @@ class ApiConstants {
   ApiConstants._();
 
   // Default Base URL (can be customized by user in login screen)
-  static const String defaultServerUrl = 'https://aavenzaone.aavenzatechnologies.com';
+  static const String defaultServerUrl =
+      'https://aavenzaone.aavenzatechnologies.com';
+  static const String companyListUrl =
+      'https://company.aavenzatechnologies.com/api/companylist';
   static const String apiPath = '/mobile/api.php';
 
   // Timeouts
@@ -16,6 +19,8 @@ class ApiConstants {
   static const String keyUser = 'auth_user';
   static const String keyServerUrl = 'server_url';
   static const String keyRememberEmail = 'remember_email';
+  static const String keyCompanyList = 'company_list';
+  static const String keySelectedCompany = 'selected_company';
 
   // API Actions
   // Auth
@@ -105,4 +110,3 @@ class ApiConstants {
   static const String actionCardUpdateTagline = 'card_update_tagline';
   static const String actionCardUpdateSafety = 'card_update_safety';
 }
-

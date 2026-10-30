@@ -24,6 +24,9 @@ class ApiClient {
 
   String get _baseUrl {
     String server = _storageService.serverUrl.trim();
+    if (!server.startsWith('http://') && !server.startsWith('https://')) {
+      server = 'https://$server';
+    }
     if (server.endsWith('/')) {
       server = server.substring(0, server.length - 1);
     }
