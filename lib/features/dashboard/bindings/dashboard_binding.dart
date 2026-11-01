@@ -20,6 +20,7 @@ class DashboardBinding extends Bindings {
         locationService: Get.find<LocationService>(),
         faceStorageService: Get.find<FaceStorageService>(),
       ),
+      fenix: true,
     );
   }
 }

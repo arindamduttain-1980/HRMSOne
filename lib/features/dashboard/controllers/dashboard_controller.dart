@@ -41,7 +41,24 @@ class DashboardController extends GetxController {
   final Rx<AttendanceRecord?> todayRecord = Rx<AttendanceRecord?>(null);
   final RxList<AttendanceRecord> history = <AttendanceRecord>[].obs;
 
-  final noteController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
+
+  String get safeNoteText {
+    try {
+      return noteController.text.trim();
+    } catch (_) {
+      noteController = TextEditingController();
+      return '';
+    }
+  }
+
+  void safeClearNote() {
+    try {
+      noteController.clear();
+    } catch (_) {
+      noteController = TextEditingController();
+    }
+  }
 
   @override
   void onInit() {
@@ -192,7 +209,7 @@ class DashboardController extends GetxController {
       }
 
       // 4. Mandatory Live Face Biometric Verification Gate
-      final note = noteController.text.trim();
+      final note = safeNoteText;
       final result = await Get.toNamed(
         AppRoutes.faceVerification,
         arguments: {
@@ -205,7 +222,7 @@ class DashboardController extends GetxController {
       );
 
       if (result is Map && result['success'] == true) {
-        noteController.clear();
+        safeClearNote();
         Get.snackbar(
           'Checked In',
           result['message']?.toString() ?? 'Check-in recorded successfully',
@@ -292,14 +309,14 @@ class DashboardController extends GetxController {
   }
 
   Future<void> markStatus(String status) async {
-    final note = noteController.text.trim();
+    final note = safeNoteText;
     isActionLoading.value = true;
     try {
       final response = await _attendanceRepository.markStatus(
         status: status,
         note: note.isNotEmpty ? note : null,
       );
-      noteController.clear();
+      safeClearNote();
       Get.snackbar(
         'Status Marked',
         response['message']?.toString() ?? 'Status marked successfully',
@@ -341,7 +358,7 @@ class DashboardController extends GetxController {
       final location = await _locationService.obtainLocationForPunch();
       if (location == null) return;
 
-      final note = noteController.text.trim();
+      final note = safeNoteText;
       final result = await Get.toNamed(
         AppRoutes.faceVerification,
         arguments: {
@@ -354,7 +371,7 @@ class DashboardController extends GetxController {
       );
 
       if (result is Map && result['success'] == true) {
-        noteController.clear();
+        safeClearNote();
         Get.snackbar(
           'Early Leave Recorded',
           result['message']?.toString() ?? 'Early leave recorded successfully',
@@ -382,7 +399,6 @@ class DashboardController extends GetxController {
   @override
   void onClose() {
     _clockTimer?.cancel();
-    noteController.dispose();
     super.onClose();
   }
 }
