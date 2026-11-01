@@ -11,7 +11,7 @@ class FaceDetectorService {
       : _faceDetector = FaceDetector(
           options: FaceDetectorOptions(
             performanceMode: FaceDetectorMode.accurate,
-            enableContours: true,
+            enableContours: false,
             enableLandmarks: true,
             enableClassification: true,
             minFaceSize: 0.15,
